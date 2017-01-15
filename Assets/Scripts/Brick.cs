@@ -6,10 +6,12 @@ public class Brick : MonoBehaviour {
 	public int HitPoints = 1;
 	public ParticleSystem DestroyEffect;
 	private SpriteRenderer sr;
+	private Ball theBall;
 
 	// Use this for initialization
 	void Start () {
 		this.sr = this.GetComponent<SpriteRenderer>();
+		this.theBall = FindObjectOfType<Ball>();
 	}
 	
 	// Update is called once per frame
