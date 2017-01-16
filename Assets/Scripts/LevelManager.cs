@@ -18,6 +18,7 @@ public class LevelManager : MonoBehaviour {
 	// Settings
 	public int currentLevel = 0;
 	public Color32[] BrickColors;
+	public Sprite[] Sprites;
 	public Brick brickPrefab;
 
 	void Start () {
@@ -43,7 +44,9 @@ public class LevelManager : MonoBehaviour {
 				if (brickType > 0)
 				{
 					Brick newBrick = Instantiate(brickPrefab, new Vector3(currentSpawnX, currentSpawnY, 0.0f - zShift), Quaternion.identity) as Brick;
-					newBrick.GetComponent<SpriteRenderer>().color = this.BrickColors[brickType];
+					SpriteRenderer sr = newBrick.GetComponent<SpriteRenderer>();
+					sr.sprite = this.Sprites[brickType - 1];
+					sr.color = this.BrickColors[brickType];
 					newBrick.HitPoints = brickType;
 					zShift += 0.0001f;
 				}

@@ -6,6 +6,7 @@ public class Paddle : MonoBehaviour
 	private Camera mainCamera;
 	private float paddleInitialY;
 	private Ball ball;
+	private Rigidbody2D ballRb;
 	private RectTransform rectTransform;
 	private BoxCollider2D boxCol;
 	private bool IsGameStarted;
@@ -23,6 +24,7 @@ public class Paddle : MonoBehaviour
 		mainCamera = FindObjectOfType<Camera>();
 		paddleInitialY = this.transform.position.y;
 		ball = FindObjectOfType<Ball>();
+		ballRb = ball.GetComponent<Rigidbody2D>();
 		rectTransform = GetComponent<RectTransform>();
 		rectTransform.sizeDelta = new Vector2(paddleWidth, paddleHeight);
 		boxCol = GetComponent<BoxCollider2D>();
@@ -39,9 +41,8 @@ public class Paddle : MonoBehaviour
 			ball.transform.position = new Vector3(this.transform.position.x, this.transform.position.y + .27f, 0);
 			if (Input.GetMouseButtonDown(0))
 			{
-				Rigidbody2D ballRb = ball.GetComponent<Rigidbody2D>();
-				ballRb.isKinematic = false;
-				ballRb.AddForce(new Vector2(2,5), ForceMode2D.Impulse); // TODO: Calculate the initial force based on user mouse position
+				this.ballRb.isKinematic = false;
+				this.ballRb.AddForce(new Vector2(2,5), ForceMode2D.Impulse); // TODO: Calculate the initial force based on user mouse position
 				IsGameStarted = true;
 			}
 		}
@@ -55,5 +56,30 @@ public class Paddle : MonoBehaviour
 		float mousePositionPixels = Mathf.Clamp(Input.mousePosition.x, leftClamp, rightClamp);
 		float mousePositionWorldX = mainCamera.ScreenToWorldPoint(new Vector3(mousePositionPixels, 0, 0)).x;
 		this.transform.position = new Vector3(mousePositionWorldX, paddleInitialY, 0);
+	}
+
+	private void OnCollisionEnter2D(Collision2D coll)
+	{
+		// When the ball is near the walls and collide with the paddle.
+		// Add force to the oposite side of the wall
+		// so it can get out of the wall loop
+
+		if (coll.gameObject.tag == "Ball")
+		{
+			Vector2 hitPoint = coll.contacts[0].point;
+			Vector2 paddleCenter = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
+
+			if (hitPoint.x < paddleCenter.x)
+			{
+				// hit is to the left side
+				// must apply force to the left
+				this.ballRb.AddForce(new Vector2(-100, 0));
+			}
+			else
+			{
+				// hit is to the right side
+				this.ballRb.AddForce(new Vector2(100, 0));
+			}
+		}
 	}
 }
