@@ -6,13 +6,11 @@ public class Brick : MonoBehaviour {
 	public int HitPoints = 1;
 	public ParticleSystem DestroyEffect;
 	private SpriteRenderer sr;
-	private Ball theBall;
 	private LevelManager levelManagerl;
 
 	// Use this for initialization
 	void Start () {
 		this.sr = this.GetComponent<SpriteRenderer>();
-		this.theBall = FindObjectOfType<Ball>();
 		this.levelManagerl = FindObjectOfType<LevelManager>();
 	}
 	

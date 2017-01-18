@@ -17,6 +17,7 @@ public class Paddle : MonoBehaviour
 
 	public float paddleWidth = defaultPaddleWidth;
 	public float paddleHeight = 27;
+	public float initialBallSpeed = 250;
 
 	// Use this for initialization
 	void Start()
@@ -42,7 +43,7 @@ public class Paddle : MonoBehaviour
 			if (Input.GetMouseButtonDown(0))
 			{
 				this.ballRb.isKinematic = false;
-				this.ballRb.AddForce(new Vector2(2,5), ForceMode2D.Impulse); // TODO: Calculate the initial force based on user mouse position
+				this.ballRb.AddForce(new Vector2(0, initialBallSpeed)); // TODO: Calculate the initial force based on user mouse position
 				IsGameStarted = true;
 			}
 		}
@@ -71,18 +72,19 @@ public class Paddle : MonoBehaviour
 
 			ballRb.velocity = Vector2.zero;
 
+			float difference = paddleCenter.x - hitPoint.x;
+
 			// Find a way to add stronger force when you have to push to ball back
 			// consider removing rigidbody and use manual movement.
 			if (hitPoint.x < paddleCenter.x)
 			{
 				// hit is to the left side
-				// must apply force to the left
-				this.ballRb.AddForce(new Vector2(-100, 200));
+				this.ballRb.AddForce(new Vector2(-(Mathf.Abs(difference * 200)), initialBallSpeed)); // difference * 143 = ~100 force at maximum
 			}
 			else
 			{
 				// hit is to the right side
-				this.ballRb.AddForce(new Vector2(100, 200));
+				this.ballRb.AddForce(new Vector2(Mathf.Abs(difference * 200), initialBallSpeed)); // difference * 143 = ~100 force at maximum
 			}
 		}
 	}

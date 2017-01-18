@@ -23,6 +23,9 @@ public class LevelManager : MonoBehaviour {
 
 	void Start () {
 
+		// Game initialization logic
+		Screen.SetResolution(540, 960, false);
+
 		this.LevelsData = LoadLevelsData();
 		this.GenerateBricks();
 		
