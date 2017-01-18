@@ -69,16 +69,20 @@ public class Paddle : MonoBehaviour
 			Vector2 hitPoint = coll.contacts[0].point;
 			Vector2 paddleCenter = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
 
+			ballRb.velocity = Vector2.zero;
+
+			// Find a way to add stronger force when you have to push to ball back
+			// consider removing rigidbody and use manual movement.
 			if (hitPoint.x < paddleCenter.x)
 			{
 				// hit is to the left side
 				// must apply force to the left
-				this.ballRb.AddForce(new Vector2(-100, 0));
+				this.ballRb.AddForce(new Vector2(-100, 200));
 			}
 			else
 			{
 				// hit is to the right side
-				this.ballRb.AddForce(new Vector2(100, 0));
+				this.ballRb.AddForce(new Vector2(100, 200));
 			}
 		}
 	}
