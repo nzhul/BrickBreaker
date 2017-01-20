@@ -67,22 +67,24 @@ public class LevelManager : MonoBehaviour {
 
 	private List<int[,]> LoadLevelsData()
 	{
-		StreamReader levelsString = new StreamReader(Application.dataPath + "/" + "Resources/Levels/levels.txt");
+		TextAsset text = Resources.Load("levels") as TextAsset;
+
+		string[] rows = text.text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
 		List<int[,]> levelsData = new List<int[,]>();
 		int[,] currentLevel = new int[maxRowCount, maxColCount];
 		int currentRow = 0;
 
-		while (!levelsString.EndOfStream)
+		for (int row = 0; row < rows.Length; row++)
 		{
-			string line = levelsString.ReadLine();
+			string line = rows[row];
 
 			if (line.IndexOf("--") == -1)
 			{
 				string[] bricks = line.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-				for (int i = 0; i < bricks.Length; i++)
+				for (int col = 0; col < bricks.Length; col++)
 				{
-					currentLevel[currentRow, i] = int.Parse(bricks[i]);
+					currentLevel[currentRow, col] = int.Parse(bricks[col]);
 				}
 
 				currentRow++;
@@ -96,8 +98,6 @@ public class LevelManager : MonoBehaviour {
 				currentLevel = new int[maxRowCount, maxColCount];
 			}
 		}
-
-		levelsString.Close();
 
 		return levelsData;
 	}
