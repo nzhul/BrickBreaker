@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.IO;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class LevelManager : MonoBehaviour {
 
@@ -14,6 +13,8 @@ public class LevelManager : MonoBehaviour {
 	private float initialBrickSpawnPositionY = 3.325f;
 	private float shiftAmmount = 0.365f;
 	private List<int[,]> LevelsData;
+	public List<Brick> RemainingBricks;
+	private Ball theBall;
 
 	// Settings
 	public int currentLevel = 0;
@@ -21,14 +22,18 @@ public class LevelManager : MonoBehaviour {
 	public Sprite[] Sprites;
 	public Brick brickPrefab;
 
-	void Start () {
-
+	private void Awake()
+	{
 		// Game initialization logic
 		Screen.SetResolution(540, 960, false);
-
+		this.RemainingBricks = new List<Brick>();
 		this.LevelsData = LoadLevelsData();
 		this.GenerateBricks();
-		
+	}
+
+	void Start () {
+
+
 	}
 
 	private void GenerateBricks()
@@ -36,7 +41,8 @@ public class LevelManager : MonoBehaviour {
 		int[,] currentLevelData = this.LevelsData[currentLevel];
 		float currentSpawnX = initialBrickSpawnPositionX;
 		float currentSpawnY = initialBrickSpawnPositionY;
-		float zShift = 0.0000f;
+		float zShift = 0.0001f;
+		int brickNumber = 1;
 
 		for (int row = 0; row < this.maxRowCount; row++)
 		{
@@ -51,6 +57,11 @@ public class LevelManager : MonoBehaviour {
 					sr.sprite = this.Sprites[brickType - 1];
 					sr.color = this.BrickColors[brickType];
 					newBrick.HitPoints = brickType;
+					newBrick.BrickIndex = brickNumber;
+					newBrick.OnBrickDestruction += NewBrick_OnBrickDestruction;
+
+					this.RemainingBricks.Add(newBrick);
+					brickNumber++;
 					zShift += 0.0001f;
 				}
 
@@ -63,6 +74,12 @@ public class LevelManager : MonoBehaviour {
 
 			currentSpawnY -= shiftAmmount;
 		}
+	}
+
+	private void NewBrick_OnBrickDestruction(int index)
+	{
+		Brick brickToRemove = this.RemainingBricks.Where(b => b.BrickIndex == index).FirstOrDefault();
+		this.RemainingBricks.Remove(brickToRemove);
 	}
 
 	private List<int[,]> LoadLevelsData()
@@ -100,10 +117,5 @@ public class LevelManager : MonoBehaviour {
 		}
 
 		return levelsData;
-	}
-
-
-	void Update () {
-
 	}
 }
