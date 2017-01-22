@@ -5,7 +5,6 @@ using System;
 public class Ball : MonoBehaviour
 {
 	public bool isFireball;
-	private CircleCollider2D circleCollider;
 
 	public float scale = .7f;
 	public ParticleSystem fireBallEffectCore;
@@ -14,13 +13,7 @@ public class Ball : MonoBehaviour
 	public event Action OnFireBallEnable;
 	public event Action OnFireBallDisable;
 
-	private void Start()
-	{
-		this.circleCollider = GetComponent<CircleCollider2D>();
-		this.ToggleFireBall();
-	}
-
-	private void ToggleFireBall()
+	public void ToggleFireBall()
 	{
 		if (this.isFireball)
 		{
