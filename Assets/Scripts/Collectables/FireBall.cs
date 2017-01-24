@@ -10,7 +10,7 @@ public class FireBall : Collectable
 
 		foreach (Ball ball in allBalls)
 		{
-			ball.ToggleFireBall();
+			ball.StartFireBall();
 		}
 	}
 }

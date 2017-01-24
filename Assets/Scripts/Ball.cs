@@ -5,6 +5,7 @@ using System;
 public class Ball : MonoBehaviour
 {
 	public bool isFireball;
+	public float fireballDuration;
 
 	public float scale = .7f;
 	public ParticleSystem fireBallEffectCore;
@@ -13,7 +14,23 @@ public class Ball : MonoBehaviour
 	public event Action OnFireBallEnable;
 	public event Action OnFireBallDisable;
 
-	public void ToggleFireBall()
+	public void StartFireBall()
+	{
+		if (!this.isFireball)
+		{
+			this.isFireball = true;
+			this.sr.enabled = false;
+			fireBallEffectCore.gameObject.SetActive(true);
+			StartCoroutine(StopFireBallAfterTime(this.fireballDuration));
+
+			if (this.OnFireBallEnable != null)
+			{
+				this.OnFireBallEnable();
+			}
+		}
+	}
+
+	public void StopFireball()
 	{
 		if (this.isFireball)
 		{
@@ -26,16 +43,12 @@ public class Ball : MonoBehaviour
 				this.OnFireBallDisable();
 			}
 		}
-		else
-		{
-			this.isFireball = true;
-			this.sr.enabled = false;
-			fireBallEffectCore.gameObject.SetActive(true);
+	}
 
-			if (this.OnFireBallEnable != null)
-			{
-				this.OnFireBallEnable();
-			}
-		}
+	private IEnumerator StopFireBallAfterTime(float seconds)
+	{
+		yield return new WaitForSeconds(seconds);
+
+		StopFireball();
 	}
 }
