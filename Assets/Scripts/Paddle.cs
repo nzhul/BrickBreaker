@@ -11,6 +11,9 @@ public class Paddle : MonoBehaviour
 	private BoxCollider2D boxCol;
 	private bool IsGameStarted;
 
+	[HideInInspector]
+	public bool PaddleIsTransforming;
+
 	private static float defaultPaddleWidth = 200;
 	private static float defaultLeftClamp = 150;
 	private static float defaultRightClamp = 400;
@@ -18,6 +21,7 @@ public class Paddle : MonoBehaviour
 	public float paddleWidth = defaultPaddleWidth;
 	public float paddleHeight = 27;
 	public float initialBallSpeed = 250;
+	public float extendShrinkDuration = 10;
 
 	// Use this for initialization
 	void Start()
@@ -51,7 +55,7 @@ public class Paddle : MonoBehaviour
 
 	private void PaddleMovement()
 	{
-		float paddleWidthShift = defaultPaddleWidth - paddleWidth;
+		float paddleWidthShift = defaultPaddleWidth - this.rectTransform.sizeDelta.x;
 		float leftClamp = defaultLeftClamp - (paddleWidthShift / 2);
 		float rightClamp = defaultRightClamp + (paddleWidthShift / 2);
 		float mousePositionPixels = Mathf.Clamp(Input.mousePosition.x, leftClamp, rightClamp);
@@ -87,5 +91,48 @@ public class Paddle : MonoBehaviour
 				this.ballRb.AddForce(new Vector2(Mathf.Abs(difference * 200), initialBallSpeed)); // difference * 143 = ~100 force at maximum
 			}
 		}
+	}
+
+	public void StartWidthAnimation(float width)
+	{
+		StartCoroutine(AnimatePaddleWidth(width));
+	}
+
+	// TODO: Fix Code duplication
+	public IEnumerator AnimatePaddleWidth(float width)
+	{
+		this.PaddleIsTransforming = true;
+		this.StartCoroutine(ResetPaddleWidthAfterTime(this.extendShrinkDuration));
+
+		if (width > this.rectTransform.sizeDelta.x)
+		{
+			float currentWidth = this.rectTransform.sizeDelta.x;
+			while (currentWidth < width)
+			{
+				currentWidth += Time.deltaTime * 200;
+				this.rectTransform.sizeDelta = new Vector2(currentWidth, paddleHeight);
+				boxCol.size = new Vector2(currentWidth, paddleHeight);
+				yield return null;
+			}
+		}
+		else
+		{
+			float currentWidth = this.rectTransform.sizeDelta.x;
+			while (currentWidth > width)
+			{
+				currentWidth -= Time.deltaTime * 200;
+				this.rectTransform.sizeDelta = new Vector2(currentWidth, paddleHeight);
+				boxCol.size = new Vector2(currentWidth, paddleHeight);
+				yield return null;
+			}
+		}
+
+		this.PaddleIsTransforming = false;
+	}
+
+	private IEnumerator ResetPaddleWidthAfterTime(float seconds)
+	{
+		yield return new WaitForSeconds(seconds);
+		this.StartWidthAnimation(this.paddleWidth);
 	}
 }

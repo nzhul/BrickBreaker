@@ -4,8 +4,14 @@ using System;
 
 public class ExtendPaddle : Collectable
 {
+	public float NewWidth = 200;
+
 	protected override void ApplyEffect()
 	{
-		Debug.Log("Extending Paddle");
+		Paddle thePaddle = FindObjectOfType<Paddle>();
+		if (thePaddle != null && !thePaddle.PaddleIsTransforming)
+		{
+			thePaddle.StartWidthAnimation(NewWidth);
+		}
 	}
 }
