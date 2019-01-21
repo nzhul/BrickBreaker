@@ -41,7 +41,7 @@ public class LevelManager : MonoBehaviour {
 		int[,] currentLevelData = this.LevelsData[currentLevel];
 		float currentSpawnX = initialBrickSpawnPositionX;
 		float currentSpawnY = initialBrickSpawnPositionY;
-		float zShift = 0.0001f;
+		float zShift = 0.1f;
 		int brickNumber = 1;
 
 		for (int row = 0; row < this.maxRowCount; row++)

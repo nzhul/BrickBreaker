@@ -1,16 +1,13 @@
-﻿using System;
-using UnityEngine;
-
-public class Shrink : Collectable
+﻿public class Shrink : Collectable
 {
-	public float NewWidth = 80;
+    public float NewWidth = .8f;
 
-	protected override void ApplyEffect()
-	{
-		Paddle thePaddle = FindObjectOfType<Paddle>();
-		if (thePaddle != null && !thePaddle.PaddleIsTransforming)
-		{
-			thePaddle.StartWidthAnimation(NewWidth);
-		}
-	}
+    protected override void ApplyEffect()
+    {
+        Paddle thePaddle = FindObjectOfType<Paddle>();
+        if (thePaddle != null && !thePaddle.PaddleIsTransforming)
+        {
+            thePaddle.StartWidthAnimation(NewWidth);
+        }
+    }
 }

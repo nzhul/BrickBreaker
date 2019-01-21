@@ -1,17 +1,13 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
-
-public class ExtendPaddle : Collectable
+﻿public class ExtendPaddle : Collectable
 {
-	public float NewWidth = 200;
+    public float NewWidth = 2.5f;
 
-	protected override void ApplyEffect()
-	{
-		Paddle thePaddle = FindObjectOfType<Paddle>();
-		if (thePaddle != null && !thePaddle.PaddleIsTransforming)
-		{
-			thePaddle.StartWidthAnimation(NewWidth);
-		}
-	}
+    protected override void ApplyEffect()
+    {
+        Paddle thePaddle = FindObjectOfType<Paddle>();
+        if (thePaddle != null && !thePaddle.PaddleIsTransforming)
+        {
+            thePaddle.StartWidthAnimation(NewWidth);
+        }
+    }
 }
