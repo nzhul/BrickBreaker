@@ -4,27 +4,23 @@ using UnityEngine;
 
 public class Brick : MonoBehaviour
 {
-
     private SpriteRenderer sr;
     private LevelManager levelManager;
     private CollectablesManager collectablesManager;
     private BoxCollider2D boxCollider;
-    private Ball theBall;
 
     public int BrickIndex;
     public int HitPoints = 1;
     public ParticleSystem DestroyEffect;
 
     // Events
-    public event Action<int> OnBrickDestruction;
+    public static event Action<Brick> OnBrickDestruction;
 
     private void Awake()
     {
         this.boxCollider = GetComponent<BoxCollider2D>();
-        this.theBall = FindObjectOfType<Ball>();
         Ball.OnFireBallEnable += Ball_OnFireBallEnable;
         Ball.OnFireBallDisable += Ball_OnFireBallDisable;
-        this.OnBrickDestruction += Brick_OnBrickDestruction;
     }
 
     // Use this for initialization
@@ -36,7 +32,7 @@ public class Brick : MonoBehaviour
     }
 
     // Yes, we subscribe on our own event, why not :)
-    private void Brick_OnBrickDestruction(int obj)
+    private void OnBrickDestroy()
     {
         float buffSpawnChance = UnityEngine.Random.Range(0, 100f);
         float debuffSpawnChance = UnityEngine.Random.Range(0, 100f);
@@ -111,12 +107,11 @@ public class Brick : MonoBehaviour
 
         this.HitPoints--;
 
-        if (this.HitPoints == 0 || theBall.isFireball)
+        if (this.HitPoints <= 0 || theBall.isFireball)
         {
-            if (this.OnBrickDestruction != null)
-            {
-                this.OnBrickDestruction(this.BrickIndex);
-            }
+            LevelManager.Instance.RemainingBricks.Remove(this);
+            OnBrickDestruction?.Invoke(this);
+            OnBrickDestroy();
 
             // Spawn Particle effect and destroy it after 4 seconds
             GameObject newEffect = Instantiate(DestroyEffect.gameObject,
@@ -132,4 +127,9 @@ public class Brick : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        Ball.OnFireBallEnable -= Ball_OnFireBallEnable;
+        Ball.OnFireBallDisable -= Ball_OnFireBallDisable;
+    }
 }

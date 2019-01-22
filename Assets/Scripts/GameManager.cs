@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts
 {
@@ -22,6 +23,24 @@ namespace Assets.Scripts
         }
         #endregion
 
+        private void Start()
+        {
+            Ball.OnBallDeath += OnBallDeath;
+        }
+
+        private void OnBallDeath(Ball obj)
+        {
+            if (BallsManager.Instance.Balls.Count <= 0)
+            {
+                SceneManager.LoadScene("Game");
+            }
+        }
+
         public bool IsGameStarted { get; set; }
+
+        private void OnDisable()
+        {
+            Ball.OnBallDeath -= OnBallDeath;
+        }
     }
 }

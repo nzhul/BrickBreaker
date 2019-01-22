@@ -13,6 +13,7 @@ public class Ball : MonoBehaviour
 
     public static event Action<Ball> OnFireBallEnable;
     public static event Action<Ball> OnFireBallDisable;
+    public static event Action<Ball> OnBallDeath;
 
     public void StartFireBall()
     {
@@ -37,6 +38,12 @@ public class Ball : MonoBehaviour
 
             OnFireBallDisable?.Invoke(this);
         }
+    }
+
+    public void Die()
+    {
+        OnBallDeath?.Invoke(this);
+        Destroy(gameObject, 1);
     }
 
     private IEnumerator StopFireBallAfterTime(float seconds)
