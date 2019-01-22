@@ -62,7 +62,7 @@ public class Paddle : MonoBehaviour
         float rightClamp = defaultRightClamp + (paddleWidthShift / 2);
         float mousePositionPixels = Mathf.Clamp(Input.mousePosition.x, leftClamp, rightClamp);
         float mousePositionWorldX = mainCamera.ScreenToWorldPoint(new Vector3(mousePositionPixels, 0, 0)).x;
-        this.transform.position = new Vector3(mousePositionWorldX, paddleInitialY, 0);
+        this.transform.position = new Vector3(mousePositionWorldX, paddleInitialY, -.13f);
     }
 
     private void OnCollisionEnter2D(Collision2D coll)
