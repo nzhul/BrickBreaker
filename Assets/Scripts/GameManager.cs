@@ -26,13 +26,26 @@ namespace Assets.Scripts
         private void Start()
         {
             Ball.OnBallDeath += OnBallDeath;
+            Brick.OnBrickDestruction += OnBrickDestruction;
+        }
+
+        private void OnBrickDestruction(Brick obj)
+        {
+            if (LevelManager.Instance.RemainingBricks.Count <= 0)
+            {
+                BallsManager.Instance.ResetBalls();
+                GameManager.Instance.IsGameStarted = false;
+                LevelManager.Instance.LoadNextLevel();
+            }
         }
 
         private void OnBallDeath(Ball obj)
         {
             if (BallsManager.Instance.Balls.Count <= 0)
             {
-                SceneManager.LoadScene("Game");
+                BallsManager.Instance.ResetBalls();
+                GameManager.Instance.IsGameStarted = false;
+                LevelManager.Instance.LoadLevel(LevelManager.Instance.CurrentLevel);
             }
         }
 

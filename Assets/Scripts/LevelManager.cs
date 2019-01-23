@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
@@ -23,7 +24,7 @@ public class LevelManager : MonoBehaviour
     private Ball theBall;
 
     // Settings
-    public int currentLevel = 0;
+    public int CurrentLevel = 0;
     public Color32[] BrickColors;
     public Sprite[] Sprites;
     public Brick brickPrefab;
@@ -42,31 +43,44 @@ public class LevelManager : MonoBehaviour
         {
             _instance = this;
         }
+    }
 
-
+    private void Start()
+    {
         bricksContainer = new GameObject("BricksContainer");
         Screen.SetResolution(540, 960, false);
         this.RemainingBricks = new List<Brick>();
         this.LevelsData = LoadLevelsData();
         this.GenerateBricks();
-    }
-
-    private void Start()
-    {
         this.OnLevelLoaded?.Invoke();
     }
 
     public void LoadNextLevel()
     {
-        this.currentLevel++;
+        this.CurrentLevel++;
+        this.LoadLevel(this.CurrentLevel);
+    }
+
+    public void LoadLevel(int level)
+    {
+        this.CurrentLevel = level;
+        this.ClearRemainingBricks();
         this.RemainingBricks = new List<Brick>();
         this.GenerateBricks();
         this.OnLevelLoaded?.Invoke();
     }
 
+    private void ClearRemainingBricks()
+    {
+        foreach (Brick brick in this.RemainingBricks.ToList())
+        {
+            Destroy(brick.gameObject);
+        }
+    }
+
     private void GenerateBricks()
     {
-        int[,] currentLevelData = this.LevelsData[currentLevel];
+        int[,] currentLevelData = this.LevelsData[CurrentLevel];
         float currentSpawnX = initialBrickSpawnPositionX;
         float currentSpawnY = initialBrickSpawnPositionY;
         float zShift = 0.1f;
