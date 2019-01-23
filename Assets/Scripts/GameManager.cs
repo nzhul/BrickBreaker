@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts
@@ -23,10 +24,33 @@ namespace Assets.Scripts
         }
         #endregion
 
+        public GameObject gameOverScreen;
+
+        public GameObject victoryScreen;
+
+        public int AvailibleLives = 3;
+
+        public int Lives { get; set; }
+
+        public bool IsGameStarted { get; set; }
+
+        public event Action<int> OnLiveLost;
+
         private void Start()
         {
+            this.Lives = this.AvailibleLives;
             Ball.OnBallDeath += OnBallDeath;
             Brick.OnBrickDestruction += OnBrickDestruction;
+        }
+
+        public void RestartGame()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        public void ShowVictoryScreen()
+        {
+            victoryScreen.SetActive(true);
         }
 
         private void OnBrickDestruction(Brick obj)
@@ -43,13 +67,21 @@ namespace Assets.Scripts
         {
             if (BallsManager.Instance.Balls.Count <= 0)
             {
-                BallsManager.Instance.ResetBalls();
-                GameManager.Instance.IsGameStarted = false;
-                LevelManager.Instance.LoadLevel(LevelManager.Instance.CurrentLevel);
+                this.Lives--;
+
+                if (this.Lives < 1)
+                {
+                    gameOverScreen.SetActive(true);
+                }
+                else
+                {
+                    OnLiveLost?.Invoke(this.Lives);
+                    BallsManager.Instance.ResetBalls();
+                    GameManager.Instance.IsGameStarted = false;
+                    LevelManager.Instance.LoadLevel(LevelManager.Instance.CurrentLevel);
+                }
             }
         }
-
-        public bool IsGameStarted { get; set; }
 
         private void OnDisable()
         {

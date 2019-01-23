@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
@@ -58,7 +59,15 @@ public class LevelManager : MonoBehaviour
     public void LoadNextLevel()
     {
         this.CurrentLevel++;
-        this.LoadLevel(this.CurrentLevel);
+
+        if (this.CurrentLevel >= this.LevelsData.Count)
+        {
+            GameManager.Instance.ShowVictoryScreen();
+        }
+        else
+        {
+            this.LoadLevel(this.CurrentLevel);
+        }
     }
 
     public void LoadLevel(int level)
@@ -83,7 +92,7 @@ public class LevelManager : MonoBehaviour
         int[,] currentLevelData = this.LevelsData[CurrentLevel];
         float currentSpawnX = initialBrickSpawnPositionX;
         float currentSpawnY = initialBrickSpawnPositionY;
-        float zShift = 0.1f;
+        float zShift = 0f;
         int brickNumber = 1;
 
         for (int row = 0; row < this.maxRowCount; row++)

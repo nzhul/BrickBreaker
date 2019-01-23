@@ -7,6 +7,7 @@ namespace Assets.Scripts
     {
         public Text Target;
         public Text ScoreText;
+        public Text LivesText;
 
         public int Score { get; set; }
 
@@ -14,6 +15,13 @@ namespace Assets.Scripts
         {
             Brick.OnBrickDestruction += OnBrickDestruction;
             LevelManager.Instance.OnLevelLoaded += Instance_OnLevelLoaded;
+            GameManager.Instance.OnLiveLost += OnLiveLost;
+            OnLiveLost(GameManager.Instance.AvailibleLives);
+        }
+
+        private void OnLiveLost(int remainingLives)
+        {
+            LivesText.text = $"LIVES: {remainingLives}";
         }
 
         private void Instance_OnLevelLoaded()
