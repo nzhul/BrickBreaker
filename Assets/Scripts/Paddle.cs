@@ -30,9 +30,9 @@ public class Paddle : MonoBehaviour
     [HideInInspector]
     public bool PaddleIsTransforming;
 
-    private static float defaultPaddleWidthInPixels = 200;
-    private static float defaultLeftClamp = 150;
-    private static float defaultRightClamp = 400;
+    private static float defaultPaddleWidthInPixels = 188;
+    private static float defaultLeftClamp = 135;
+    private static float defaultRightClamp = 410;
 
     public float paddleWidth = 2;
     public float paddleHeight = 0.28f;
@@ -57,12 +57,12 @@ public class Paddle : MonoBehaviour
     private void PaddleMovement()
     {
         //float paddleWidthShift = defaultPaddleWidth - 188; // 188 is the current width of the paddle in pixels. before was this.recTransform.size.x
-        float paddleWidthShift = defaultPaddleWidthInPixels - (94 * this.sr.size.x);
-        float leftClamp = defaultLeftClamp - (paddleWidthShift / 2);
-        float rightClamp = defaultRightClamp + (paddleWidthShift / 2);
+        float paddleWidthShift = (defaultPaddleWidthInPixels - ((defaultPaddleWidthInPixels / 2) * this.sr.size.x)) / 2;
+        float leftClamp = defaultLeftClamp - paddleWidthShift;
+        float rightClamp = defaultRightClamp + paddleWidthShift;
         float mousePositionPixels = Mathf.Clamp(Input.mousePosition.x, leftClamp, rightClamp);
         float mousePositionWorldX = mainCamera.ScreenToWorldPoint(new Vector3(mousePositionPixels, 0, 0)).x;
-        this.transform.position = new Vector3(mousePositionWorldX, paddleInitialY, -.13f);
+        this.transform.position = new Vector3(mousePositionWorldX, paddleInitialY, 0);
     }
 
     private void OnCollisionEnter2D(Collision2D coll)

@@ -4,25 +4,25 @@ using System.Linq;
 using Assets.Scripts;
 using UnityEngine;
 
-public class LevelManager : MonoBehaviour
+public class BricksManager : MonoBehaviour
 {
     #region Singleton
-    private static LevelManager _instance;
+    private static BricksManager _instance;
 
-    public static LevelManager Instance => _instance;
+    public static BricksManager Instance => _instance;
     #endregion
 
-    private float maxColumns;
-    private float maxRows;
-    private int maxColCount = 12;
-    private int maxRowCount = 17;
-    private float initialBrickSpawnPositionX = -1.96f;
-    private float initialBrickSpawnPositionY = 3.325f;
-    private float shiftAmmount = 0.365f;
+    private readonly float maxColumns;
+    private readonly float maxRows;
+    private readonly int maxColCount = 12;
+    private readonly int maxRowCount = 17;
+    private readonly float initialBrickSpawnPositionX = -1.96f;
+    private readonly float initialBrickSpawnPositionY = 3.325f;
+    private readonly float shiftAmmount = 0.365f;
     private List<int[,]> LevelsData;
     public List<Brick> RemainingBricks { get; set; }
     public int InitialBricksCount { get; set; }
-    private Ball theBall;
+    private readonly Ball theBall;
 
     // Settings
     public int CurrentLevel = 0;
@@ -50,10 +50,8 @@ public class LevelManager : MonoBehaviour
     {
         bricksContainer = new GameObject("BricksContainer");
         Screen.SetResolution(540, 960, false);
-        this.RemainingBricks = new List<Brick>();
         this.LevelsData = LoadLevelsData();
         this.GenerateBricks();
-        this.OnLevelLoaded?.Invoke();
     }
 
     public void LoadNextLevel()
@@ -74,9 +72,7 @@ public class LevelManager : MonoBehaviour
     {
         this.CurrentLevel = level;
         this.ClearRemainingBricks();
-        this.RemainingBricks = new List<Brick>();
         this.GenerateBricks();
-        this.OnLevelLoaded?.Invoke();
     }
 
     private void ClearRemainingBricks()
@@ -89,11 +85,11 @@ public class LevelManager : MonoBehaviour
 
     private void GenerateBricks()
     {
+        this.RemainingBricks = new List<Brick>();
         int[,] currentLevelData = this.LevelsData[CurrentLevel];
         float currentSpawnX = initialBrickSpawnPositionX;
         float currentSpawnY = initialBrickSpawnPositionY;
         float zShift = 0f;
-        int brickNumber = 1;
 
         for (int row = 0; row < this.maxRowCount; row++)
         {
@@ -104,16 +100,9 @@ public class LevelManager : MonoBehaviour
                 if (brickType > 0)
                 {
                     Brick newBrick = Instantiate(brickPrefab, new Vector3(currentSpawnX, currentSpawnY, 0.0f - zShift), Quaternion.identity) as Brick;
-                    newBrick.transform.SetParent(bricksContainer.transform);
-                    SpriteRenderer sr = newBrick.GetComponent<SpriteRenderer>();
-                    sr.sprite = this.Sprites[brickType - 1];
-                    sr.color = this.BrickColors[brickType];
-                    newBrick.HitPoints = brickType;
-                    newBrick.BrickIndex = brickNumber;
-                    //newBrick.OnBrickDestruction += NewBrick_OnBrickDestruction;
+                    newBrick.Init(bricksContainer.transform, this.Sprites[brickType - 1], this.BrickColors[brickType], brickType);
 
                     this.RemainingBricks.Add(newBrick);
-                    brickNumber++;
                     zShift += 0.0001f;
                 }
 
@@ -128,13 +117,8 @@ public class LevelManager : MonoBehaviour
         }
 
         this.InitialBricksCount = this.RemainingBricks.Count;
+        this.OnLevelLoaded?.Invoke();
     }
-
-    //private void OnBrickDestruction(Brick brick)
-    //{
-    //    Brick brickToRemove = this.RemainingBricks.Where(b => b.BrickIndex == brick.BrickIndex).FirstOrDefault();
-    //    this.RemainingBricks.Remove(brickToRemove);
-    //}
 
     private List<int[,]> LoadLevelsData()
     {

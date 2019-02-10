@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 public class Brick : MonoBehaviour
 {
     private SpriteRenderer sr;
-    private LevelManager levelManager;
-    private CollectablesManager collectablesManager;
     private BoxCollider2D boxCollider;
-
-    public int BrickIndex;
     public int HitPoints = 1;
     public ParticleSystem DestroyEffect;
 
@@ -27,24 +24,21 @@ public class Brick : MonoBehaviour
     private void Start()
     {
         this.sr = this.GetComponent<SpriteRenderer>();
-        this.levelManager = FindObjectOfType<LevelManager>();
-        this.collectablesManager = FindObjectOfType<CollectablesManager>();
     }
 
-    // Yes, we subscribe on our own event, why not :)
     private void OnBrickDestroy()
     {
         float buffSpawnChance = UnityEngine.Random.Range(0, 100f);
         float debuffSpawnChance = UnityEngine.Random.Range(0, 100f);
         bool alreadySpawned = false;
 
-        if (buffSpawnChance <= this.collectablesManager.BuffChance)
+        if (buffSpawnChance <= CollectablesManager.Instance.BuffChance)
         {
             alreadySpawned = true;
             Collectable newBuff = this.SpawnCollectable(true);
         }
 
-        if (debuffSpawnChance <= this.collectablesManager.DebuffChance && !alreadySpawned)
+        if (debuffSpawnChance <= CollectablesManager.Instance.DebuffChance && !alreadySpawned)
         {
             Collectable newDebuff = this.SpawnCollectable(false);
         }
@@ -56,11 +50,11 @@ public class Brick : MonoBehaviour
 
         if (isBuff)
         {
-            collection = this.collectablesManager.AvailableBuffs;
+            collection = CollectablesManager.Instance.AvailableBuffs;
         }
         else
         {
-            collection = this.collectablesManager.AvailableDebuffs;
+            collection = CollectablesManager.Instance.AvailableDebuffs;
         }
 
         int buffIndex = UnityEngine.Random.Range(0, collection.Count);
@@ -109,22 +103,36 @@ public class Brick : MonoBehaviour
 
         if (this.HitPoints <= 0 || theBall.isFireball)
         {
-            LevelManager.Instance.RemainingBricks.Remove(this);
+            BricksManager.Instance.RemainingBricks.Remove(this);
             OnBrickDestruction?.Invoke(this);
             OnBrickDestroy();
-
-            // Spawn Particle effect and destroy it after 4 seconds
-            GameObject newEffect = Instantiate(DestroyEffect.gameObject,
-                new Vector3(this.gameObject.transform.position.x, this.gameObject.transform.position.y, this.gameObject.transform.position.z - 0.2f), Quaternion.identity) as GameObject;
-            ParticleSystem ps = newEffect.GetComponent<ParticleSystem>();
-            ps.startColor = this.sr.color;
-            Destroy(newEffect, DestroyEffect.startLifetime);
+            SpawnDestroyEffect();
             Destroy(this.gameObject);
         }
         else
         {
-            this.sr.sprite = this.levelManager.Sprites[this.HitPoints - 1];
+            this.sr.sprite = BricksManager.Instance.Sprites[this.HitPoints - 1];
         }
+    }
+
+    public void Init(Transform containerTransform, Sprite sprite, Color color, int hitpoints)
+    {
+        this.transform.SetParent(containerTransform);
+        SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.color = color;
+        this.HitPoints = hitpoints;
+    }
+
+    private void SpawnDestroyEffect()
+    {
+        Vector3 brickPos = gameObject.transform.position;
+        Vector3 spawnPosition = new Vector3(brickPos.x, brickPos.y, brickPos.z - 0.2f);
+        GameObject effect = Instantiate(DestroyEffect.gameObject, spawnPosition, Quaternion.identity);
+
+        MainModule mm = effect.GetComponent<ParticleSystem>().main;
+        mm.startColor = this.sr.color;
+        Destroy(effect, DestroyEffect.main.startLifetime.constant);
     }
 
     private void OnDisable()

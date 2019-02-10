@@ -14,7 +14,7 @@ namespace Assets.Scripts
         private void Start()
         {
             Brick.OnBrickDestruction += OnBrickDestruction;
-            LevelManager.Instance.OnLevelLoaded += Instance_OnLevelLoaded;
+            BricksManager.Instance.OnLevelLoaded += Instance_OnLevelLoaded;
             GameManager.Instance.OnLiveLost += OnLiveLost;
             OnLiveLost(GameManager.Instance.AvailibleLives);
         }
@@ -47,13 +47,13 @@ namespace Assets.Scripts
         private void UpdateRemainingBricksText()
         {
             Target.text = $@"Target:
-{LevelManager.Instance.RemainingBricks.Count} / {LevelManager.Instance.InitialBricksCount}";
+{BricksManager.Instance.RemainingBricks.Count} / {BricksManager.Instance.InitialBricksCount}";
         }
 
         private void OnDisable()
         {
             Brick.OnBrickDestruction -= OnBrickDestruction;
-            LevelManager.Instance.OnLevelLoaded -= Instance_OnLevelLoaded;
+            BricksManager.Instance.OnLevelLoaded -= Instance_OnLevelLoaded;
         }
     }
 }

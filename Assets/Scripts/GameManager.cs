@@ -55,11 +55,11 @@ namespace Assets.Scripts
 
         private void OnBrickDestruction(Brick obj)
         {
-            if (LevelManager.Instance.RemainingBricks.Count <= 0)
+            if (BricksManager.Instance.RemainingBricks.Count <= 0)
             {
                 BallsManager.Instance.ResetBalls();
                 GameManager.Instance.IsGameStarted = false;
-                LevelManager.Instance.LoadNextLevel();
+                BricksManager.Instance.LoadNextLevel();
             }
         }
 
@@ -78,7 +78,7 @@ namespace Assets.Scripts
                     OnLiveLost?.Invoke(this.Lives);
                     BallsManager.Instance.ResetBalls();
                     GameManager.Instance.IsGameStarted = false;
-                    LevelManager.Instance.LoadLevel(LevelManager.Instance.CurrentLevel);
+                    BricksManager.Instance.LoadLevel(BricksManager.Instance.CurrentLevel);
                 }
             }
         }

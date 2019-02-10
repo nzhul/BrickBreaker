@@ -9,11 +9,16 @@ public class Ball : MonoBehaviour
 
     public float scale = .7f;
     public ParticleSystem fireBallEffectCore;
-    public SpriteRenderer sr;
+    private SpriteRenderer sr;
 
     public static event Action<Ball> OnFireBallEnable;
     public static event Action<Ball> OnFireBallDisable;
     public static event Action<Ball> OnBallDeath;
+
+    private void Awake()
+    {
+        this.sr = GetComponentInChildren<SpriteRenderer>();
+    }
 
     public void StartFireBall()
     {

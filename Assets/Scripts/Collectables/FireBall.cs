@@ -1,16 +1,12 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
+﻿using Assets.Scripts;
 
 public class FireBall : Collectable
 {
-	protected override void ApplyEffect()
-	{
-		Ball[] allBalls = FindObjectsOfType<Ball>();
-
-		foreach (Ball ball in allBalls)
-		{
-			ball.StartFireBall();
-		}
-	}
+    protected override void ApplyEffect()
+    {
+        foreach (Ball ball in BallsManager.Instance.Balls)
+        {
+            ball.StartFireBall();
+        }
+    }
 }
