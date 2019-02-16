@@ -167,7 +167,7 @@ public class Paddle : MonoBehaviour
         Vector3 spawnPosition = new Vector3(muzzle.transform.position.x, muzzle.transform.position.y + 0.2f, muzzle.transform.position.z);
         Projectile bullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
         Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
-        bulletRb.AddForce(new Vector2(0, 350f));
+        bulletRb.AddForce(new Vector2(0, 450f));
     }
 
     public void StartWidthAnimation(float width)
